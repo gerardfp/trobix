@@ -575,12 +575,36 @@
         </div>
     </button>
 
+    <button class="global-btn btn-fullscreen hidden" id="fullscreenBtn" title="Pantalla Completa"
+        style="bottom: 1.5rem; top: auto;">
+        <div style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                </path>
+            </svg>
+        </div>
+    </button>
+
     <!-- Summary Overlay -->
     <div class="summary-overlay" id="summaryOverlay">
         <div class="summary-content">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width: 64px; height: 64px; color: var(--success); margin-bottom: 1rem;">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                <circle cx="12" cy="9" r="6"></circle>
+            </svg>
             <h2 id="summaryCompleted">¡Completado!</h2>
             <p id="finalStats">Has completado el mapa.</p>
-            <button class="btn-primary" id="returnMenuBtn">Volver al Menú</button>
+            <p id="playAgainText" style="margin-bottom: 1.5rem; color: var(--text-primary); font-weight: 600;">¿Quieres
+                volver a jugar?</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn-cancel" id="returnMenuBtn">Volver al Menú</button>
+                <button class="btn-primary" id="playAgainBtn">Volver a jugar</button>
+            </div>
         </div>
     </div>
 
@@ -616,7 +640,9 @@
                 restartConfirm: "¿Seguro que quieres reiniciar el juego?",
                 cancel: "Cancelar",
                 completed: "¡Completado!",
-                returnMenu: "Volver al Menú",
+                returnMenu: "Volver al inicio",
+                playAgain: "Volver a jugar",
+                playAgainQuestion: "¿Quieres volver a jugar?",
                 summary: (t, e) => `Has encontrado ${t} elementos con ${e} errores.`
             },
             ca: {
@@ -629,7 +655,9 @@
                 restartConfirm: "Segur que vols reiniciar el joc?",
                 cancel: "Cancel·lar",
                 completed: "Completat!",
-                returnMenu: "Tornar al Menú",
+                returnMenu: "Tornar a l'inici",
+                playAgain: "Tornar a jugar",
+                playAgainQuestion: "Vols tornar a jugar?",
                 summary: (t, e) => `Has trobat ${t} elements amb ${e} errors.`
             }
         };
@@ -652,6 +680,8 @@
             document.getElementById('restartBtn').title = t.restartTitle;
             document.getElementById('summaryCompleted').textContent = t.completed;
             document.getElementById('returnMenuBtn').textContent = t.returnMenu;
+            document.getElementById('playAgainText').textContent = t.playAgainQuestion;
+            document.getElementById('playAgainBtn').textContent = t.playAgain;
 
             // Update Target Name if playing
             if (activeGame && targetId) {
@@ -834,6 +864,7 @@
             document.getElementById('gameUI').classList.remove('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
             document.getElementById('restartBtn').classList.remove('hidden');
+            document.getElementById('fullscreenBtn').classList.remove('hidden');
 
             // Inject SVG
             const container = document.getElementById('mapContainer');
@@ -1158,6 +1189,12 @@
             document.getElementById('mainMenu').classList.remove('hidden');
             document.getElementById('backBtn').classList.add('hidden');
             document.getElementById('restartBtn').classList.add('hidden');
+            document.getElementById('fullscreenBtn').classList.add('hidden');
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(err => {
+                    console.error("Error exiting fullscreen:", err);
+                });
+            }
             document.getElementById('mapContainer').innerHTML = '';
             document.getElementById('summaryOverlay').classList.remove('active');
             updateLanguageUI();
@@ -1165,6 +1202,24 @@
 
         document.getElementById('returnMenuBtn').addEventListener('click', () => {
             document.getElementById('backBtn').click();
+        });
+
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            document.getElementById('summaryOverlay').classList.remove('active');
+            clearGameState();
+            startGame(activeGame);
+        });
+
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
+                });
+            } else {
+                document.exitFullscreen().catch(err => {
+                    console.error("Error exiting fullscreen:", err);
+                });
+            }
         });
 
         document.getElementById('restartBtn').addEventListener('click', () => {

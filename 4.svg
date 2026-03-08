@@ -20,14 +20,57 @@
   <metadata
      id="game-metadata">
         {
-    &quot;title&quot;: {
-        &quot;es&quot;: &quot;Componentes de una célula animal&quot;,
-        &quot;ca&quot;: &quot;Components d'una cèl·lula animal&quot;
+    "title": {
+        "es": "Componentes de una célula animal",
+        "ca": "Components d'una cèl·lula animal"
     },
-    &quot;category&quot;: {
-        &quot;es&quot;: &quot;Biología&quot;,
-        &quot;ca&quot;: &quot;Biologia&quot;
-    }}
+    "category": {
+        "es": "Biología",
+        "ca": "Biologia"
+    },
+    "translations": {
+        "Nucleolus": {
+            "es": "Nucléolo",
+            "ca": "Nuclèol"
+        },
+        "Cytoplasm": {
+            "es": "Citoplasma",
+            "ca": "Citoplasma"
+        },
+        "Cell_membrane": {
+            "es": "Membrana celular",
+            "ca": "Membrana cel·lular"
+        },
+        "Nucleus": {
+            "es": "Núcleo",
+            "ca": "Nucli"
+        },
+        "Ribosomes": {
+            "es": "Ribosomas",
+            "ca": "Ribosomes"
+        },
+        "Endoplasmic_reticulum": {
+            "es": "Retículo endoplasmático",
+            "ca": "Reticle endoplasmàtic"
+        },
+        "Golgi_apparatus": {
+            "es": "Aparato de Golgi",
+            "ca": "Aparell de Golgi"
+        },
+        "Mitochondrion": {
+            "es": "Mitocondria",
+            "ca": "Mitocondri"
+        },
+        "Lysosome": {
+            "es": "Lisosoma",
+            "ca": "Lisosoma"
+        },
+        "Vacuole": {
+            "es": "Vacuola",
+            "ca": "Vacúola"
+        }
+    }
+    }
     </metadata>
   <sodipodi:namedview
      id="base"
@@ -10116,7 +10159,7 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc"
        transform="translate(-420.0088,-54.37195)"
-       name="nucleolus" />
+       name="Nucleolus" />
     <path
        transform="matrix(1.5014463,0,0,1.6737628,-882.90921,-211.36625)"
        style="fill:#ffffff;fill-opacity:0.367876;stroke:none;filter:url(#filter6107)"
