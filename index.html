@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trobix</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --success: #22c55e;
+            --error: #ef4444;
+            --province-fill: #b3b3b3;
+            --province-stroke: #ffffff;
+            --province-hover: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* --- Menu UI --- */
+        #mainMenu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            overflow-y: auto;
+            touch-action: auto;
+            /* allow scroll in menu */
+        }
+
+        .menu-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .category-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .map-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .map-thumbnail {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .map-thumbnail svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+
+        .map-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .map-card h3 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        /* --- Global Buttons --- */
+        .global-btn {
+            position: fixed;
+            right: 1.5rem;
+            width: 32px;
+            height: 32px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            color: white;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .global-btn:hover {
+            background: rgba(59, 130, 246, 0.8);
+            transform: scale(1.1);
+        }
+
+        .btn-lang {
+            top: 1.5rem;
+        }
+
+        .btn-back {
+            top: 1.5rem;
+            right: auto;
+            left: 1.5rem;
+        }
+
+        .btn-restart {
+            top: 4rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Game UI --- */
+        #gameOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 0.4rem;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.85);
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .stat-icon {
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .stat-value.hits {
+            color: var(--success);
+        }
+
+        .stat-value.errors {
+            color: var(--error);
+        }
+
+        .target-item {
+            font-size: 1.3rem;
+            margin-top: 0.2rem;
+            color: #fff;
+            text-shadow: 0 0 7px #3b82f6, 0 0 10px #3b82f6, 0 0 21px #3b82f6;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            70% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .game-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            cursor: grab;
+            z-index: 10;
+        }
+
+        .game-area:active {
+            cursor: grabbing;
+        }
+
+        #mapContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* SVG Styles applied generically */
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .playable-path {
+            cursor: pointer;
+            transition: filter 0.2s ease, transform 0.2s ease;
+        }
+
+        .playable-path:hover,
+        .playable-path.hovered {
+            filter: brightness(0.65) contrast(1.2);
+        }
+
+        .correct-item {
+            fill: var(--success) !important;
+            stroke-width: 1;
+        }
+
+        .correct-flash {
+            animation: correctPulse 0.3s ease-out;
+            fill: var(--success) !important;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+
+        @keyframes correctPulse {
+            0% {
+                fill: #3b82f6;
+                stroke-width: 2;
+                transform: scale(0.98);
+            }
+
+            80% {
+                fill: #22c55e;
+                stroke-width: 1.5;
+                transform: scale(1.04);
+            }
+
+            100% {
+                fill: var(--success);
+                stroke-width: 1;
+                transform: scale(1);
+            }
+        }
+
+        .error-flash {
+            animation: errorShake 0.4s ease-in-out;
+            fill: var(--error) !important;
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+                fill: #ef4444;
+            }
+
+            40% {
+                transform: translateX(5px);
+                fill: #ef4444;
+            }
+
+            60% {
+                transform: translateX(-5px);
+                fill: #ef4444;
+            }
+
+            80% {
+                transform: translateX(5px);
+                fill: #ef4444;
+            }
+        }
+
+        /* Summary overlay */
+        .summary-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .summary-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .summary-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .summary-content h2 {
+            margin-bottom: 1rem;
+            color: var(--success);
+        }
+
+        .summary-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* Dialog Styles */
+        dialog {
+            border: none;
+            border-radius: 12px;
+            padding: 0;
+            background: var(--card-bg);
+            color: var(--text-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            max-width: 90vw;
+            width: 320px;
+            margin: auto;
+            /* Centers the dialog element perfectly in the viewport natively */
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        @media (prefers-color-scheme: light) {
+            dialog {
+                background: white;
+                color: #1e293b;
+            }
+        }
+
+        .dialog-content {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .dialog-content h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            color: var(--text-color);
+        }
+
+        @media (prefers-color-scheme: light) {
+            .dialog-content h2 {
+                color: #1e293b;
+            }
+
+            .dialog-content p {
+                color: #475569;
+            }
+        }
+
+        .dialog-content p {
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .btn-cancel {
+                background: #e2e8f0;
+                color: #475569;
+            }
+
+            .btn-cancel:hover {
+                background: #cbd5e1;
+            }
+        }
+
+        .btn-cancel:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Main Menu -->
+    <div id="mainMenu">
+        <h1 class="menu-title" id="menuMainTitle">
+            <span style='color: #facc15'>T</span><span style='color: #60a5fa'>r</span><span
+                style='color: #ef4444'>ò</span><span style='color: #4ade80'>b</span><span style='color: white'>ix</span>
+        </h1>
+        <div id="categoriesContainer">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- Game UI -->
+    <div id="gameUI" class="hidden">
+        <div id="gameOverlay">
+            <h1 class="header-title" id="gameModeTitle">Map</h1>
+
+            <div class="stats-container">
+                <div class="stat-card" id="hitsTitle" title="Aciertos">
+                    <div class="stat-icon" style="color:var(--success)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="stat-value hits" id="hits">0</span>
+                </div>
+
+                <div class="stat-card" id="remTitle" title="Restantes">
+                    <div class="stat-icon" style="color:var(--accent)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <span class="stat-value" id="remaining">0</span>
+                </div>
+
+                <div class="stat-card" id="errTitle" title="Errores">
+                    <div class="stat-icon" style="color:var(--error)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                    <span class="stat-value errors" id="errors">0</span>
+                </div>
+            </div>
+
+            <div class="target-item" id="targetItem">Cargando...</div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <div id="mapContainer"></div>
+        </div>
+    </div>
+
+    <!-- Global Buttons -->
+    <button class="global-btn btn-lang" id="langToggle" title="Cambiar Idioma">
+        <div id="flagIcon"
+            style="width: 18px; height: 12px; display: flex; align-items: center; justify-content: center;"></div>
+    </button>
+
+    <button class="global-btn btn-back hidden" id="backBtn" title="Volver al Menú">
+        <div style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </div>
+    </button>
+
+    <button class="global-btn btn-restart hidden" id="restartBtn" title="Reiniciar">
+        <div style="width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        </div>
+    </button>
+
+    <!-- Summary Overlay -->
+    <div class="summary-overlay" id="summaryOverlay">
+        <div class="summary-content">
+            <h2 id="summaryCompleted">¡Completado!</h2>
+            <p id="finalStats">Has completado el mapa.</p>
+            <button class="btn-primary" id="returnMenuBtn">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Dialog de Confirmación de Reinicio -->
+    <dialog id="restartDialog" class="restart-dialog">
+        <div class="dialog-content">
+            <h2 id="dialogTitle">¿Reiniciar?</h2>
+            <p id="dialogDesc">¿Seguro que quieres reiniciar el juego?</p>
+            <div class="dialog-buttons">
+                <button class="btn-cancel" id="btnCancelRestart">Cancelar</button>
+                <button class="btn-primary" id="btnConfirmRestart">Reiniciar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        // System variables
+        const LANG_KEY = 'juego_idioma';
+        let currentLang = localStorage.getItem(LANG_KEY) || 'es';
+
+        let availableGames = []; // Loaded from SVGs
+        let activeGame = null; // Currently playing game config
+
+        // Translations for UI
+        const uiTranslations = {
+            es: {
+                loading: "Cargando...",
+                hits: "Aciertos",
+                remaining: "Restantes",
+                errors: "Errores",
+                backTitle: "Volver",
+                restartTitle: "Reiniciar",
+                restartConfirm: "¿Seguro que quieres reiniciar el juego?",
+                cancel: "Cancelar",
+                completed: "¡Completado!",
+                returnMenu: "Volver al Menú",
+                summary: (t, e) => `Has encontrado ${t} elementos con ${e} errores.`
+            },
+            ca: {
+                loading: "Carregant...",
+                hits: "Encerts",
+                remaining: "Restants",
+                errors: "Errors",
+                backTitle: "Tornar",
+                restartTitle: "Reiniciar",
+                restartConfirm: "Segur que vols reiniciar el joc?",
+                cancel: "Cancel·lar",
+                completed: "Completat!",
+                returnMenu: "Tornar al Menú",
+                summary: (t, e) => `Has trobat ${t} elements amb ${e} errors.`
+            }
+        };
+
+        // UI Update functions
+        function updateLanguageUI() {
+            const flag = document.getElementById('flagIcon');
+            // Flags: Show current language flag
+            if (currentLang === 'es') {
+                flag.innerHTML = `<svg viewBox="0 0 9 6"><rect width="9" height="6" fill="#aa151b"/><rect width="9" height="3" y="1.5" fill="#f1bf00"/><rect width="9" height="1.5" y="4.5" fill="#aa151b"/></svg>`;
+            } else {
+                flag.innerHTML = `<svg viewBox="0 0 9 6"><rect width="9" height="6" fill="#f1bf00"/><rect width="9" height="0.66" y="0.66" fill="#d32e28"/><rect width="9" height="0.66" y="2" fill="#d32e28"/><rect width="9" height="0.66" y="3.33" fill="#d32e28"/><rect width="9" height="0.66" y="4.66" fill="#d32e28"/></svg>`;
+            }
+
+            const t = uiTranslations[currentLang];
+            document.getElementById('hitsTitle').title = t.hits;
+            document.getElementById('remTitle').title = t.remaining;
+            document.getElementById('errTitle').title = t.errors;
+            document.getElementById('backBtn').title = t.backTitle;
+            document.getElementById('restartBtn').title = t.restartTitle;
+            document.getElementById('summaryCompleted').textContent = t.completed;
+            document.getElementById('returnMenuBtn').textContent = t.returnMenu;
+
+            // Update Target Name if playing
+            if (activeGame && targetId) {
+                const nameInfo = activeGameItems.find(i => i.id === targetId);
+                const translationObj = activeGame.metadata.translations[targetId];
+                let displayName = translationObj ? (translationObj[currentLang] || translationObj.es || targetId) : (nameInfo ? nameInfo.name : targetId);
+                document.getElementById('targetItem').textContent = displayName;
+
+                // Also update header mode title
+                document.getElementById('gameModeTitle').textContent = activeGame.metadata.title[currentLang] || activeGame.metadata.title.es;
+            }
+
+            // If in menu, redraw categories to reflect localized titles
+            if (!activeGame) {
+                renderMenu();
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'ca' : 'es';
+            localStorage.setItem(LANG_KEY, currentLang);
+            updateLanguageUI();
+        }
+
+        document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+
+        // Map Bootstrapper
+        async function loadMaps() {
+            let i = 1;
+            while (true) {
+                try {
+                    const response = await fetch(`${i}.svg`);
+                    if (!response.ok) break;
+                    const text = await response.text();
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(text, 'image/svg+xml');
+                    const metadataTag = doc.querySelector('metadata');
+
+                    if (metadataTag) {
+                        const rawData = JSON.parse(metadataTag.textContent);
+
+                        // The translations are now stored natively as an embedded JSON object
+                        let transObj = rawData.translations || {};
+
+                        availableGames.push({
+                            id: i,
+                            file: `${i}.svg`,
+                            svgContent: text,
+                            metadata: {
+                                title: rawData.title,
+                                category: rawData.category,
+                                translations: transObj
+                            }
+                        });
+                    }
+                    i++;
+                } catch (e) {
+                    break;
+                }
+            }
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            const categories = {};
+            availableGames.forEach(g => {
+                const c = g.metadata.category ? JSON.stringify(g.metadata.category) : 'Otros';
+                if (!categories[c]) categories[c] = [];
+                categories[c].push(g);
+            });
+
+            for (const [catJson, games] of Object.entries(categories)) {
+                let displayName = catJson;
+                if (catJson !== 'Otros') {
+                    try {
+                        const parsed = JSON.parse(catJson);
+                        displayName = parsed[currentLang] || parsed.es || catJson;
+                    } catch (e) { }
+                }
+                const catDiv = document.createElement('div');
+                catDiv.className = 'category-container';
+                catDiv.innerHTML = `<h2 class="category-title">${displayName}</h2><div class="map-grid"></div>`;
+
+                const grid = catDiv.querySelector('.map-grid');
+                games.forEach(g => {
+                    const card = document.createElement('div');
+                    card.className = 'map-card';
+                    const titleStr = g.metadata.title[currentLang] || g.metadata.title.es || 'Mapa ' + g.id;
+                    card.innerHTML = `
+                        <div class="map-thumbnail"><img src="${g.file}" alt="${titleStr}" style="max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none;"></div>
+                        <h3>${titleStr}</h3>
+                    `;
+                    card.addEventListener('click', () => startGame(g));
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(catDiv);
+            }
+        }
+
+        // --- Game Logic Variables ---
+        let items = [];
+        let activeGameItems = []; // Contains mapping of ID vs fallback name
+        let completedItems = new Set();
+        let targetId = null;
+        let hits = 0;
+        let errors = 0;
+
+        let scaleFactor = 1.1;
+        let minx = 0, miny = 0, width = 0, height = 0;
+        let rminx = 0, rminy = 0, rwidth = 0, rheight = 0;
+        let isPanning = false, hasMoved = false;
+        let startX, startY, lastX, lastY;
+        let point;
+
+        function getStorageKey() {
+            return 'gameState_' + activeGame.id;
+        }
+
+        function saveGameState() {
+            if (!activeGame) return;
+            const state = {
+                hits,
+                errors,
+                completedItems: Array.from(completedItems),
+                targetId,
+                viewBox: { minx, miny, width, height }
+            };
+            localStorage.setItem(getStorageKey(), JSON.stringify(state));
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem(getStorageKey());
+            if (!saved) return false;
+
+            try {
+                const state = JSON.parse(saved);
+                hits = state.hits || 0;
+                errors = state.errors || 0;
+                completedItems = new Set(state.completedItems || []);
+                targetId = state.targetId || null;
+                if (state.viewBox) {
+                    minx = state.viewBox.minx;
+                    miny = state.viewBox.miny;
+                    width = state.viewBox.width;
+                    height = state.viewBox.height;
+                }
+
+                const svg = document.querySelector('#mapContainer svg');
+                completedItems.forEach(key => {
+                    const val = CSS.escape(key);
+                    const sel = `[name="${val}"]`;
+                    const els = svg.querySelectorAll(sel);
+                    els.forEach(p => p.classList.add('correct-item'));
+                });
+
+                document.getElementById('hits').textContent = hits;
+                document.getElementById('errors').textContent = errors;
+                return true;
+            } catch (e) {
+                console.error("Error loading state", e);
+                return false;
+            }
+        }
+
+        function clearGameState() {
+            if (activeGame) localStorage.removeItem(getStorageKey());
+        }
+
+        function startGame(gameData) {
+            activeGame = gameData;
+            localStorage.setItem('activeGameUrl', gameData.file);
+
+            // UI Toggle
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('gameUI').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('restartBtn').classList.remove('hidden');
+
+            // Inject SVG
+            const container = document.getElementById('mapContainer');
+            // Strip out <metadata> before injecting so it doesn't mess with layout although it shouldn't
+            let cleanSVG = gameData.svgContent.replace(/<metadata>[\s\S]*?<\/metadata>/g, '');
+            container.innerHTML = cleanSVG;
+
+            const svg = container.querySelector('svg');
+            if (svg) svg.classList.add('map-svg');
+
+            // Force SVG to take up space for getBBox to work if needed later
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+
+            // Reset Game Vars
+            hits = 0; errors = 0; completedItems = new Set();
+            targetId = null;
+            items = []; // List of IDs
+            activeGameItems = []; // List of {id, name}
+
+            // Ensure items have the interactive class
+            const nodes = svg.querySelectorAll('[name]');
+            nodes.forEach(n => {
+                n.classList.add('playable-path');
+                const key = n.getAttribute('name');
+                const name = key;
+
+                // Very basic validation
+                if (key) {
+                    if (!items.includes(key)) {
+                        items.push(key);
+                        activeGameItems.push({ id: key, name: name });
+                    }
+
+                    n.addEventListener('click', (e) => {
+                        if (hasMoved) return;
+                        e.stopPropagation();
+                        handleMapClick(key, n);
+                    });
+
+                    n.addEventListener('mouseenter', () => {
+                        const cssKey = key.replace(/"/g, '\\"');
+                        svg.querySelectorAll(`[name="${cssKey}"]`).forEach(el => el.classList.add('hovered'));
+                    });
+
+                    n.addEventListener('mouseleave', () => {
+                        const cssKey = key.replace(/"/g, '\\"');
+                        svg.querySelectorAll(`[name="${cssKey}"]`).forEach(el => el.classList.remove('hovered'));
+                    });
+                }
+            });
+
+            document.getElementById('hits').textContent = '0';
+            document.getElementById('errors').textContent = '0';
+
+            // Calculate map bounding box
+            rminx = 0; rminy = 0; rwidth = 1000; rheight = 1000;
+
+            const vb = svg.getAttribute('viewBox');
+            if (vb) {
+                const parts = vb.split(/[\s,]+/).map(parseFloat);
+                if (parts.length === 4 && !parts.some(isNaN)) {
+                    rminx = parts[0];
+                    rminy = parts[1];
+                    rwidth = parts[2];
+                    rheight = parts[3];
+                }
+            } else if (svg.getAttribute('width') && svg.getAttribute('height')) {
+                rwidth = parseFloat(svg.getAttribute('width'));
+                rheight = parseFloat(svg.getAttribute('height'));
+            } else {
+                // Fallback to manual tight bounding box of playable regions
+                let rx1 = Infinity, ry1 = Infinity, rx2 = -Infinity, ry2 = -Infinity;
+                const playableNodes = svg.querySelectorAll('.playable-path');
+                if (playableNodes.length > 0) {
+                    playableNodes.forEach(n => {
+                        if (n.tagName.toLowerCase() === 'g') {
+                            n.querySelectorAll('path, polygon, rect, circle, ellipse, line, polyline').forEach(child => {
+                                try {
+                                    const box = child.getBBox();
+                                    if (box.width && box.height) {
+                                        rx1 = Math.min(rx1, box.x);
+                                        ry1 = Math.min(ry1, box.y);
+                                        rx2 = Math.max(rx2, box.x + box.width);
+                                        ry2 = Math.max(ry2, box.y + box.height);
+                                    }
+                                } catch (e) { }
+                            });
+                        } else {
+                            try {
+                                const box = n.getBBox();
+                                if (box.width && box.height) {
+                                    rx1 = Math.min(rx1, box.x);
+                                    ry1 = Math.min(ry1, box.y);
+                                    rx2 = Math.max(rx2, box.x + box.width);
+                                    ry2 = Math.max(ry2, box.y + box.height);
+                                }
+                            } catch (e) { }
+                        }
+                    });
+
+                    if (rx1 !== Infinity) {
+                        const w = rx2 - rx1;
+                        const h = ry2 - ry1;
+                        const padx = w * 0.05;
+                        const pady = h * 0.05;
+                        rminx = rx1 - padx;
+                        rminy = ry1 - pady;
+                        rwidth = w + (padx * 2);
+                        rheight = h + (pady * 2);
+                    }
+                }
+            }
+
+            minx = rminx; miny = rminy; width = rwidth; height = rheight;
+
+            setupZoomPan(svg);
+
+            const isLoaded = loadGameState();
+            document.getElementById('remaining').textContent = items.length - completedItems.size;
+
+            updateLanguageUI();
+
+            if (isLoaded && targetId) {
+                setTransform(svg);
+            } else {
+                centerMap(svg);
+                nextRound();
+            }
+        }
+
+        function setupZoomPan(svg) {
+            const gameArea = document.getElementById('gameArea');
+            let transformPending = false;
+
+            window.setTransform = () => {
+                if (transformPending) return;
+                transformPending = true;
+                requestAnimationFrame(() => {
+                    svg.setAttribute('viewBox', `${minx} ${miny} ${width} ${height}`);
+                    transformPending = false;
+                    saveGameState();
+                });
+            };
+
+            window.centerMap = () => {
+                const rect = gameArea.getBoundingClientRect();
+                const gameAspect = rect.width / rect.height;
+                const mapAspect = rwidth / rheight;
+
+                if (gameAspect > mapAspect) {
+                    height = rheight;
+                    width = height * gameAspect;
+                    miny = rminy;
+                    minx = rminx - (width - rwidth) / 2;
+                } else {
+                    width = rwidth;
+                    height = width / gameAspect;
+                    minx = rminx;
+                    miny = rminy - (height - rheight) / 2;
+                }
+                setTransform();
+            }
+
+            point = svg.createSVGPoint();
+
+            gameArea.onwheel = (e) => {
+                e.preventDefault();
+                const scaleD = e.deltaY < 0 ? 1 / scaleFactor : scaleFactor;
+
+                point.x = e.clientX;
+                point.y = e.clientY;
+                const startPoint = point.matrixTransform(svg.getScreenCTM().inverse());
+
+                minx -= (startPoint.x - minx) * (scaleD - 1);
+                miny -= (startPoint.y - miny) * (scaleD - 1);
+                width *= scaleD;
+                height *= scaleD;
+
+                setTransform();
+            };
+
+            gameArea.onmousedown = (e) => {
+                e.preventDefault();
+                startX = lastX = e.clientX;
+                startY = lastY = e.clientY;
+                isPanning = true;
+                hasMoved = false;
+            };
+
+            window.onmousemove = (e) => {
+                if (!isPanning) return;
+                const rect = gameArea.getBoundingClientRect();
+                const dx = (e.clientX - lastX) * (width / rect.width);
+                const dy = (e.clientY - lastY) * (height / rect.height);
+                if (Math.hypot(e.clientX - startX, e.clientY - startY) > 5) hasMoved = true;
+                minx -= dx; miny -= dy;
+                lastX = e.clientX; lastY = e.clientY;
+                setTransform();
+            };
+
+            window.onmouseup = () => { isPanning = false; };
+
+            // Touch support
+            let lastPinchDist = 0;
+            gameArea.ontouchstart = (e) => {
+                hasMoved = false;
+                if (e.touches.length === 1) {
+                    startX = lastX = e.touches[0].clientX;
+                    startY = lastY = e.touches[0].clientY;
+                    isPanning = true;
+                } else if (e.touches.length === 2) {
+                    lastPinchDist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            };
+
+            gameArea.ontouchmove = (e) => {
+                if (e.touches.length === 1 && isPanning) {
+                    const rect = gameArea.getBoundingClientRect();
+                    const dx = (e.touches[0].clientX - lastX) * (width / rect.width);
+                    const dy = (e.touches[0].clientY - lastY) * (height / rect.height);
+                    if (Math.hypot(e.touches[0].clientX - startX, e.touches[0].clientY - startY) > 5) hasMoved = true;
+                    minx -= dx; miny -= dy;
+                    lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+                    setTransform();
+                } else if (e.touches.length === 2) {
+                    e.preventDefault(); hasMoved = true;
+                    const d = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    const scaleD = lastPinchDist / d;
+
+                    point.x = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    point.y = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    const startPoint = point.matrixTransform(svg.getScreenCTM().inverse());
+
+                    minx -= (startPoint.x - minx) * (scaleD - 1);
+                    miny -= (startPoint.y - miny) * (scaleD - 1);
+                    width *= scaleD;
+                    height *= scaleD;
+
+                    lastPinchDist = d;
+                    setTransform();
+                }
+            };
+            gameArea.ontouchend = () => { isPanning = false; };
+        }
+
+        function nextRound() {
+            const available = items.filter(id => !completedItems.has(id));
+
+            if (available.length === 0) {
+                showSummary();
+                return;
+            }
+
+            let pool = available;
+            if (available.length > 1 && targetId) {
+                pool = available.filter(id => id !== targetId);
+            }
+
+            targetId = pool[Math.floor(Math.random() * pool.length)];
+
+            document.getElementById('remaining').textContent = available.length;
+            updateLanguageUI(); // will refresh the targetId display text
+            saveGameState();
+        }
+
+        function handleMapClick(clickedKey, clickedElement) {
+            if (completedItems.has(targetId)) return;
+
+            if (clickedKey === targetId) {
+                hits++;
+                document.getElementById('hits').textContent = hits;
+                completedItems.add(targetId);
+
+                const cssKey = clickedKey.replace(/"/g, '\\"');
+                const matchingElements = clickedElement.closest('svg').querySelectorAll(`[name="${cssKey}"]`);
+
+                matchingElements.forEach(el => el.classList.add('correct-flash'));
+                setTimeout(() => {
+                    matchingElements.forEach(el => {
+                        el.classList.remove('correct-flash');
+                        el.classList.add('correct-item'); // Persistent
+                    });
+                }, 4000);
+
+                saveGameState();
+                setTimeout(() => nextRound(), 300);
+            } else {
+                errors++;
+                document.getElementById('errors').textContent = errors;
+                saveGameState();
+
+                const cssKey = clickedKey.replace(/"/g, '\\"');
+                const matchingElements = clickedElement.closest('svg').querySelectorAll(`[name="${cssKey}"]`);
+
+                matchingElements.forEach(el => el.classList.add('error-flash'));
+                setTimeout(() => {
+                    matchingElements.forEach(el => el.classList.remove('error-flash'));
+                    nextRound();
+                }, 400);
+            }
+        }
+
+        function showSummary() {
+            clearGameState();
+            const t = uiTranslations[currentLang];
+            document.getElementById('summaryOverlay').classList.add('active');
+            document.getElementById('finalStats').textContent = t.summary(items.length, errors);
+        }
+
+        // Global buttons logic
+        document.getElementById('backBtn').addEventListener('click', () => {
+            activeGame = null;
+            localStorage.removeItem('activeGameUrl');
+            document.getElementById('gameUI').classList.add('hidden');
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('restartBtn').classList.add('hidden');
+            document.getElementById('mapContainer').innerHTML = '';
+            document.getElementById('summaryOverlay').classList.remove('active');
+            updateLanguageUI();
+        });
+
+        document.getElementById('returnMenuBtn').addEventListener('click', () => {
+            document.getElementById('backBtn').click();
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            if (activeGame) {
+                // Configurar textos del idioma antes de abrir
+                const t = uiTranslations[currentLang];
+                document.getElementById('dialogTitle').textContent = t.restartTitle;
+                document.getElementById('dialogDesc').textContent = t.restartConfirm;
+                document.getElementById('btnCancelRestart').textContent = t.cancel;
+                document.getElementById('btnConfirmRestart').textContent = t.restartTitle;
+
+                document.getElementById('restartDialog').showModal();
+            }
+        });
+
+        document.getElementById('btnCancelRestart').addEventListener('click', () => {
+            document.getElementById('restartDialog').close();
+        });
+
+        document.getElementById('btnConfirmRestart').addEventListener('click', () => {
+            document.getElementById('restartDialog').close();
+            clearGameState();
+            startGame(activeGame);
+        });
+
+        // Init
+        updateLanguageUI();
+        loadMaps().then(() => {
+            const lastGameUrl = localStorage.getItem('activeGameUrl');
+            if (lastGameUrl) {
+                const game = availableGames.find(m => m.file === lastGameUrl);
+                if (game) startGame(game);
+            }
+        });
+
+    </script>
+</body>
+
+</html>
