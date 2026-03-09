@@ -12,7 +12,7 @@
     },
     "translations": {
         "La_Coruna": {
-            "es": "La Coruña",
+            "es": "la Coruña",
             "ca": "La Corunya"
         },
         "Alava": {
@@ -45,7 +45,7 @@
         },
         "Baleares": {
             "es": "Baleares",
-            "ca": "Baleares"
+            "ca": "Illes Balears"
         },
         "Barcelona": {
             "es": "Barcelona",
@@ -113,11 +113,11 @@
         },
         "La_Rioja": {
             "es": "La Rioja",
-            "ca": "La Rioja"
+            "ca": "la Rioja"
         },
         "Las_Palmas": {
             "es": "Las Palmas",
-            "ca": "Las Palmas"
+            "ca": "las Palmas"
         },
         "Leon": {
             "es": "León",
