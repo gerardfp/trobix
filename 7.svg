@@ -23,15 +23,75 @@
   <metadata
      id="game-metadata">
         {
-    &quot;title&quot;: {
-        &quot;es&quot;: &quot;Comunidades Autónomas de España&quot;,
-        &quot;ca&quot;: &quot;Comunitats Autònoma d'Espanya&quot;
+    "title": {
+        "es": "Comunidades Autónomas de España",
+        "ca": "Comunitats Autònomes d'Espanya"
     },
-    &quot;category&quot;: {
-        &quot;es&quot;: &quot;Geografía&quot;,
-        &quot;ca&quot;: &quot;Geografia&quot;
+    "category": {
+        "es": "Geografía",
+        "ca": "Geografia"
     },
-    &quot;translations&quot;: {
+    "translations": {
+      "Canàries":{
+         "es": "Canarias",
+         "ca": "Canàries"
+      },
+      "Comunitat de Madrid":{
+         "es": "Comunidad de Madrid",
+         "ca": "Comunitat de Madrid"
+      },
+      "Andalucia":{
+         "es": "Andalucía",
+         "ca": "Andalusia"
+      },
+      "Aragó":{
+         "es": "Aragón",
+         "ca": "Aragó"
+      },
+      "Astúries":{
+         "es": "Asturias",
+         "ca": "Astúries"
+      },
+      "Illes Balears":{
+         "es": "Baleares",
+         "ca": "Illes Balears"
+      },
+      "Canàries":{
+         "es": "Canarias",
+         "ca": "Canàries"
+      },
+      "Cantàbria":{
+         "es": "Cantabria",
+         "ca": "Cantàbria"
+      },
+      "Castella - la Manxa":{
+         "es": "Castilla - La Mancha",
+         "ca": "Castella - la Manxa"
+      },
+      "Castella i Lleó":{
+         "es": "Castilla y León",
+         "ca": "Castella i Lleó"
+      },
+      "Catalunya":{
+         "es": "Cataluña",
+         "ca": "Catalunya"
+      },
+      "Galícia":{
+         "es": "Galicia",
+         "ca": "Galícia"
+      },
+      "Comunitat Valenciana":{
+         "es": "Comunidad Valenciana",
+         "ca": "Comunitat Valenciana"
+      },
+      "Euskadi":{
+         "es": "Pais Vasco",
+         "ca": "Euskadi"
+      },
+      "Regió de Múrcia":{
+         "es": "Región de Murcia",
+         "ca": "Regió de Múrcia"
+      }
     }
         }</metadata>
   <sodipodi:namedview
