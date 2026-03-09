@@ -282,13 +282,15 @@
             filter: brightness(0.65) contrast(1.2);
         }
 
-        .correct-item {
-            fill: var(--success) !important;
+        .correct-item,
+        .correct-item * {
+            fill: var(--correct-fill, var(--success)) !important;
         }
 
-        .correct-flash {
+        .correct-flash,
+        .correct-flash * {
             animation: correctPulse 0.3s ease-out;
-            fill: var(--success) !important;
+            fill: var(--correct-fill, var(--success)) !important;
             transform-origin: center;
             transform-box: fill-box;
         }
@@ -307,7 +309,7 @@
             }
 
             100% {
-                fill: var(--success);
+                fill: var(--correct-fill, var(--success));
                 stroke-width: 1;
                 transform: scale(1);
             }
