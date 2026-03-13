@@ -20,54 +20,74 @@
   <metadata
      id="game-metadata">
         {
-    &quot;title&quot;: {
-        &quot;es&quot;: &quot;Componentes de una célula animal&quot;,
-        &quot;ca&quot;: &quot;Components d'una cèl·lula animal&quot;
+    "title": {
+        "es": "Componentes de una célula animal",
+        "ca": "Components d'una cèl·lula animal"
     },
-    &quot;category&quot;: {
-        &quot;es&quot;: &quot;Biología&quot;,
-        &quot;ca&quot;: &quot;Biologia&quot;
+    "category": {
+        "es": "Biología",
+        "ca": "Biologia"
     },
-    &quot;translations&quot;: {
-        &quot;Nucleolus&quot;: {
-            &quot;es&quot;: &quot;Nucléolo&quot;,
-            &quot;ca&quot;: &quot;Nuclèol&quot;
+    "translations": {
+        "Nucleolus": {
+            "es": "Nucléolo",
+            "ca": "Nuclèol"
         },
-        &quot;Cytoplasm&quot;: {
-            &quot;es&quot;: &quot;Citoplasma&quot;,
-            &quot;ca&quot;: &quot;Citoplasma&quot;
+        "Cytoplasm": {
+            "es": "Citoplasma",
+            "ca": "Citoplasma"
         },
-        &quot;Cell_membrane&quot;: {
-            &quot;es&quot;: &quot;Membrana celular&quot;,
-            &quot;ca&quot;: &quot;Membrana cel·lular&quot;
+        "Cell membrane": {
+            "es": "Membrana celular",
+            "ca": "Membrana cel·lular"
         },
-        &quot;Nucleus&quot;: {
-            &quot;es&quot;: &quot;Núcleo&quot;,
-            &quot;ca&quot;: &quot;Nucli&quot;
+        "Nucleus": {
+            "es": "Núcleo",
+            "ca": "Nucli"
         },
-        &quot;Ribosomes&quot;: {
-            &quot;es&quot;: &quot;Ribosomas&quot;,
-            &quot;ca&quot;: &quot;Ribosomes&quot;
+        "Ribosomes": {
+            "es": "Ribosomas",
+            "ca": "Ribosomes"
         },
-        &quot;Endoplasmic_reticulum&quot;: {
-            &quot;es&quot;: &quot;Retículo endoplasmático&quot;,
-            &quot;ca&quot;: &quot;Reticle endoplasmàtic&quot;
+        "Rough endoplasmic reticulum": {
+            "es": "Retículo endoplasmático rugoso",
+            "ca": "Reticle endoplasmàtic rugós"
         },
-        &quot;Golgi_apparatus&quot;: {
-            &quot;es&quot;: &quot;Aparato de Golgi&quot;,
-            &quot;ca&quot;: &quot;Aparell de Golgi&quot;
+        "Smooth endoplasmic reticulum": {
+            "es": "Retículo endoplasmático liso",
+            "ca": "Reticle endoplasmàtic llis"
         },
-        &quot;Mitochondrion&quot;: {
-            &quot;es&quot;: &quot;Mitocondria&quot;,
-            &quot;ca&quot;: &quot;Mitocondri&quot;
+        "Golgi apparatus": {
+            "es": "Aparato de Golgi",
+            "ca": "Aparell de Golgi"
         },
-        &quot;Lysosome&quot;: {
-            &quot;es&quot;: &quot;Lisosoma&quot;,
-            &quot;ca&quot;: &quot;Lisosoma&quot;
+        "Mitochondrion": {
+            "es": "Mitocondria",
+            "ca": "Mitocondri"
         },
-        &quot;Vacuole&quot;: {
-            &quot;es&quot;: &quot;Vacuola&quot;,
-            &quot;ca&quot;: &quot;Vacúola&quot;
+        "Lysosome": {
+            "es": "Lisosoma",
+            "ca": "Lisosoma"
+        },
+        "Vacuole": {
+            "es": "Vacuola",
+            "ca": "Vacúola"
+        },
+        "Centriole": {
+            "es": "Centriolo",
+            "ca": "Centríol"
+        },
+        "Cytoskeleton": {
+            "es": "Citoesqueleto",
+            "ca": "Citoesquelet"
+        },
+        "Plasma membrane": {
+            "es": "Membrana plasmática",
+            "ca": "Membrana plasmàtica"
+        },
+        "Cytosol": {
+            "es": "Citosol",
+            "ca": "Citosol"
         }
     }
     }
